@@ -4,6 +4,7 @@
 		private $firstName;
 		private $lastName;
 		private $privacyLevel;
+		private $country;
 		private $friendsList;
 		private $friendsOfFriendsList;
 		private $circleList = array();
@@ -74,7 +75,7 @@
 		
 		private function populatePendingFriends($id, $pdo){
 			#Get Friends List
-			$stmt = $pdo->prepare('SELECT DISTINCT id, first_name, last_name
+			$stmt = $pdo->prepare('SELECT DISTINCT id, first_name, last_name, email_address
 									FROM user AS U
 									LEFT JOIN friendship AS F 
 									ON U.id = F.user_1
@@ -86,7 +87,7 @@
 		}
 		
 		function __construct($id, $pdo){
-			$stmt = $pdo->prepare('SELECT id, first_name, last_name, privacy_setting_fk
+			$stmt = $pdo->prepare('SELECT id, first_name, last_name, privacy_setting_fk, country
 									FROM user
 									WHERE id = :id');
 			$stmt->execute(['id'=>$id]);
@@ -95,6 +96,7 @@
 			$this->firstName = $row['first_name'];
 			$this->lastName = $row['last_name'];
 			$this->privacyLevel = $row['privacy_setting_fk'];
+			$this->country = $row['country'];
 			$this->populateFriendsList($id, $pdo);
 			$this->populateFriendsOfFriendsList($id, $pdo);
 			$this->populateCircleList($id, $pdo);
@@ -127,6 +129,30 @@
 		
 		function getId(){
 			return $this->id;
+		}
+		
+		function getRecommendations($pdo){
+			try{
+				$stmt = $pdo->prepare('SELECT id, first_name, last_name, email_address
+									FROM user
+									WHERE country LIKE :country
+									AND id != :id
+									LIMIT 5');
+				$stmt->execute(['country'=>"%".$this->country."%",
+								'id'=>$this->id]);
+			}
+			catch(PDOException $e){
+				return $e->getCode();
+			}
+			$recs = array();
+			if($stmt->rowCount() != 0){
+				foreach($stmt->fetchAll() as $rec){
+					if(!in_array($rec, $this->friendsList)){
+						array_push($recs, $rec);
+					}
+				}
+			}
+			return $recs;
 		}
 	}
 ?>

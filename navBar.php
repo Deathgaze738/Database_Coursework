@@ -20,6 +20,9 @@
 			echo '<li>';
 				echo '<a href="circles.php"> My Circles </a>';
 			echo '</li>';
+			echo '<li>';
+				echo '<a href="editProfile.php"> Edit Profile </a>';
+			echo '</li>';
 		echo '</ul>';
 	echo '</nav>';
 ?>

@@ -60,6 +60,14 @@
 							echo $comment->getUsername();
 							echo '</a>  ';
 							echo '<p>'.$comment->getContent().'</p>';
+							if($owner){
+								echo '<form action="photo_functions/deleteComment.php" method="POST">';
+								echo '<input type="hidden" name="photoid" value="'.$photo->getId().'">';
+								echo '<input type="hidden" name="commentid" value="'.$comment->getId().'">';
+								echo '<input type="hidden" name="collectionid" value="'.$collection.'">';
+								echo '<input type="submit" value="Delete Comment">';
+							}
+						echo '</form>';
 						}
 						echo '</p>';
 					echo '</div>';

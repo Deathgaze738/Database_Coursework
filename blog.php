@@ -82,4 +82,23 @@
 			$(div_to_change).html(result);
 		}});
 	});
+	
+	$("#recs").keyup(function(){
+		var currentVal = $("#recs").val();
+		console.log("YO YO YO ");
+		if(currentVal == ''){
+			$("#searchBox").hide();
+			$("#friends").show();
+		}
+		else{
+			$("#friends").hide();
+			$("#searchBox").show();
+			$.ajax({url: "blog_functions/userSearch.php", 
+				method: "POST",
+				data:{"value": currentVal},
+				success: function(result){
+			$("#searchBox").html(result);
+		}});
+		}
+	})
 </script>
